@@ -9,3 +9,4 @@ archive
 __pycache__
 *test*.gzip
 *.lock
+.ipynb_checkpoints

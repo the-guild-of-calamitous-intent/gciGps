@@ -1,6 +1,31 @@
 # GPS
 
-- [reference](https://shadyelectronics.com/gps-nmea-sentence-structure/)
+
+Message | Function
+--------|------------
+DP  | Dynamic positioning
+DTM	| Datum reference information
+GBS	| GNSS satellite fault detection (RAIM support)
+[GGA][1]	| Time, position, and fix related data
+[GLL][5]	| Position data: position fix, time of position fix, and status
+GNS	| GNS Fix data
+GRS	| GRS range residuals
+[GSA][6]	| GPS DOP and active satellites
+GST	| Position error statistics
+[GSV][3]	| Number of SVs in view, PRN, elevation, azimuth, and SNR
+HDT	| Heading from True North
+[RMC][2]	| Position, Velocity, and Time
+[VTG][7]	| Actual track made good and speed over ground
+[ZDA][4]	| UTC day, month, and year, and local time zone offset
+
+
+[1]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/GGA.html
+[2]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/RMC.html
+[3]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/GSV.html
+[4]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/ZDA.html
+[5]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/GLL.html
+[6]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/GSA.html
+[7]: https://www.ae.utexas.edu/courses/ase389p7/projects/svatek/commands/VTG.html
 
 ## GGA – Global Positioning System Fix Data
 
@@ -53,4 +78,7 @@ $GNRMC,060512.00,A,3150.788156,N,11711.922383,E,0.0,,311019,,,A,V*1B
 
 # References
 
-- [shady electronics](https://shadyelectronics.com/gps-nmea-sentence-structure/#:~:text=If%20you%20just%20need%20%E2%80%9CGPS,have%20to%20use%20RMC%20sentences.)
+- [GPS message format](https://gpsd.gitlab.io/gpsd/NMEA.html#_gga_global_positioning_system_fix_data)
+- [NEMA messages](https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_MessageOverview.html)
+- [shady electronics, RMC](https://shadyelectronics.com/gps-nmea-sentence-structure/#:~:text=If%20you%20just%20need%20%E2%80%9CGPS,have%20to%20use%20RMC%20sentences.)
+- [shady electronics](https://shadyelectronics.com/gps-nmea-sentence-structure/)

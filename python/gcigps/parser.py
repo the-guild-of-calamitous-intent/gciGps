@@ -1,7 +1,12 @@
 
 from .messages import *
 
-def parseHex(hi, low):
+def parseHex(hi, lo):
+    """
+    GPS message checksum is a hex number converted to characters and
+    this converts them back go a number:
+      parseHex('A','4') --> 0xA4
+    """
     def char2hex(c):
         if (c < '0'):
             return 0
@@ -16,25 +21,46 @@ def parseHex(hi, low):
     return ans
 
 class Parser:
+    """
+    Parser can turn limited NEMA GPS message strings into message
+    structures. By default, only GGA and RMC messages are parsed.
+    This can be changed by:
+      p = Parser()
+      p.gsa = True
+      msg = p.parse_msg("$GPGSA,...,*A4")
+    """
+
+    gga = True
+    gsa = False
+    gsv = False
+    rmc = True
+    vtg = False
+
     def parse_msg(self, msg):
-        ok = valid_msg(msg)
+        ok = self.valid_msg(msg)
         if not ok:
             print("*** ERROR: invalide gps message ***")
+            print(msg)
             return None
 
         hdr = msg[3:6]
         gps = None
         if hdr == "GSA":
-            gps = gsa_parser(msg)
+            if not self.gsa: return None
+            gps = self.gsa_parser(msg)
         elif hdr == "RMC":
-            gps = rmc_parser(msg)
+            if not self.rmc: return None
+            gps = self.rmc_parser(msg)
         elif hdr == "GGA":
-            gps = gga_parser(msg)
+            if not self.gga: return None
+            gps = self.gga_parser(msg)
         elif hdr == "GSV":
-            # gps = gga_parser(msg)
+            if not self.gsv: return None
+            # gps = gsv_parser(msg)
             pass
         elif hdr == "VTG":
-            # gps = gga_parser(msg)
+            if not self.vtg: return None
+            # gps = vtg_parser(msg)
             pass
         else:
             print("Unknown message:", msg)
@@ -50,7 +76,6 @@ class Parser:
             cs = cs ^ ord(c)
 
         cs = cs & 0xff
-        # cc = parseHex(msg[-2])*16 + parseHex(msg[-1])
         cc = parseHex(msg[-2], msg[-1])
         return cc == cs
 
@@ -65,7 +90,7 @@ class Parser:
             case 3: fix = "3D"
             case _: fix = chunks[2]
 
-        msg = GSA(
+        msg = gsa_t(
             chunks[0],
             chunks[1],
             fix,
@@ -94,7 +119,7 @@ class Parser:
         if chunks[6] == 'W':
             lon = -lon
 
-        msg = RMC(
+        msg = rmc_t(
             id,
             utc,
             chunks[2],
@@ -130,7 +155,7 @@ class Parser:
         if chunks[5] == 'W':
             lon = -lon
 
-        msg = GGA(
+        msg = gga_t(
             id,
             utc,
             lat, lon,

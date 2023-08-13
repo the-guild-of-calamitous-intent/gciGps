@@ -11,9 +11,9 @@ $GPRMC,234805.000,A,3906.7106,N,12120.3144,W,0.17,95.16,120823,,,A*4D
 $GPVTG,95.16,T,,M,0.17,N,0.31,K,A*02
 """
 
-GSA = namedtuple("GSA", "id mode fix prns pdop hdop vdop")
-RMC = namedtuple("RMC", "id utc status lat lon speed track data mag")
-GGA = namedtuple("GGA", "id utc lat lon qual num_sats hdop msl geoid age ref_id")
+gsa_t = namedtuple("GSA", "id mode fix prns pdop hdop vdop")
+rmc_t = namedtuple("RMC", "id utc status lat lon speed track data mag")
+gga_t = namedtuple("GGA", "id utc lat lon qual num_sats hdop msl geoid age ref_id")
 time_t = namedtuple("time_t", "hr min sec")
 date_t = namedtuple("data_t", "day month year")
 sat_t = namedtuple("sat_t", "prn el az snr")

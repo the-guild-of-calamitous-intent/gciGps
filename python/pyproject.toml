@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gcigps"
-version = "2023.08.12"
+version = "2023.08.13"
 description = "parsing gps messages"
 authors = ["walchko <walchko@users.noreply.github.com>"]
 readme = "readme.md"
