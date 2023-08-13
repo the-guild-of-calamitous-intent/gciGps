@@ -1,0 +1,53 @@
+#######################################
+# Syntax Coloring Map For RWS_NMEA
+#######################################
+# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+gsa_t	KEYWORD1
+gga_t	KEYWORD1
+rmc_t	KEYWORD1
+date_t	KEYWORD1
+time_t	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+lastNMEA	KEYWORD2
+newNMEAreceived	KEYWORD2
+common_init	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+seconds	KEYWORD2
+milliseconds	KEYWORD2
+latitude	KEYWORD2
+longitude	KEYWORD2
+latitude_fixed	KEYWORD2
+longitude_fixed	KEYWORD2
+latitudeDegrees	KEYWORD2
+longitudeDegrees	KEYWORD2
+lat	KEYWORD2
+lon	KEYWORD2
+geoidheight	KEYWORD2
+altitude	KEYWORD2
+speed	KEYWORD2
+angle	KEYWORD2
+magvariation	KEYWORD2
+HDOP	KEYWORD2
+VDOP	KEYWORD2
+PDOP	KEYWORD2
+mag	KEYWORD2
+fix	KEYWORD2
+fixquality	KEYWORD2
+fixquality_3d	KEYWORD2
+satellites	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+NMEA_EXTENSIONS	LITERAL1

@@ -1,0 +1,11 @@
+build
+dist
+*.pyc
+.DS_Store
+._*
+old
+archive
+.pytest_cache
+__pycache__
+*test*.gzip
+*.lock
