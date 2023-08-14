@@ -1,6 +1,6 @@
 # gciGps
 
-[![Actions Status](https://github.com/the-guild-of-calamitous-intent/gcigps/workflows/CheckPackage/badge.svg)](https://github.com/the-guild-of-calamitous-intent/gcigps/actions)
+[![Python](https://github.com/the-guild-of-calamitous-intent/gciGps/actions/workflows/python.yaml/badge.svg)](https://github.com/the-guild-of-calamitous-intent/gciGps/actions/workflows/python.yaml)
 ![GitHub](https://img.shields.io/github/license/the-guild-of-calamitous-intent/gcigps)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/gcigps)
 ![PyPI](https://img.shields.io/pypi/v/gcigps)
