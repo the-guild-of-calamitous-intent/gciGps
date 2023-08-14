@@ -6,6 +6,7 @@
 ##############################################
 
 from .messages import *
+from .gps_cntrl import *
 from .parser import Parser
 
 from importlib.metadata import version # type: ignore
