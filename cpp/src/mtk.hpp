@@ -1,51 +1,60 @@
-
+/////////////////////////////////////////////////////////////////////////////////////
+// MIT License
+//
+// Copyright (c) 2023 Kevin J. Walchko
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#define PMTK_SET_NMEA_UPDATE_1HZ "$PMTK220,1000*1F" ///<  1 Hz
-#define PMTK_SET_NMEA_UPDATE_2HZ "$PMTK220,500*2B"  ///<  2 Hz
-#define PMTK_SET_NMEA_UPDATE_5HZ "$PMTK220,200*2C"  ///<  5 Hz
-#define PMTK_SET_NMEA_UPDATE_10HZ "$PMTK220,100*2F" ///< 10 Hz
-// Position fix update rate commands.
-#define PMTK_API_SET_FIX_CTL_100_MILLIHERTZ                                    \
-  "$PMTK300,10000,0,0,0,0*2C" ///< Once every 10 seconds, 100 millihertz.
-#define PMTK_API_SET_FIX_CTL_200_MILLIHERTZ                                    \
-  "$PMTK300,5000,0,0,0,0*18" ///< Once every 5 seconds, 200 millihertz.
-#define PMTK_API_SET_FIX_CTL_1HZ "$PMTK300,1000,0,0,0,0*1C" ///< 1 Hz
-#define PMTK_API_SET_FIX_CTL_5HZ "$PMTK300,200,0,0,0,0*2F"  ///< 5 Hz
+// CR \r
+// LF \n
+// <CR><LF> \r\n
+// $[....]<CR><LF>
+
+// PMTK commands
+// https://www.sparkfun.com/datasheets/GPS/Modules/PMTK_Protocol.pdf
+#define GCI_UPDATE_1HZ "$PMTK220,1000*1F\r\n" //  1 Hz
+#define GCI_UPDATE_2HZ "$PMTK220,500*2B\r\n"  //  2 Hz
+#define GCI_UPDATE_5HZ "$PMTK220,200*2C\r\n"  //  5 Hz
+#define GCI_UPDATE_10HZ "$PMTK220,100*2F\r\n" // 10 Hz
+
+// Position fix update rates
 // Can't fix position faster than 5 times a second!
+#define GCI_FIX_CTL_1HZ "$PMTK300,1000,0,0,0,0*1C\r\n" // 1 Hz output
+#define GCI_FIX_CTL_5HZ "$PMTK300,200,0,0,0,0*2F\r\n"  // 5 Hz output
 
-#define PMTK_SET_BAUD_115200 "$PMTK251,115200*1F" ///< 115200 bps
-#define PMTK_SET_BAUD_57600 "$PMTK251,57600*2C"   ///<  57600 bps
-#define PMTK_SET_BAUD_9600 "$PMTK251,9600*17"     ///<   9600 bps
+#define GCI_BAUD_115200 "$PMTK251,115200*1F\r\n" // 115200 bps
+#define GCI_BAUD_57600 "$PMTK251,57600*2C\r\n"   //  57600 bps
+#define GCI_BAUD_9600 "$PMTK251,9600*17\r\n"     //   9600 bps
 
-#define PMTK_ENABLE_SBAS                                                       \
-  "$PMTK313,1*2E" ///< Enable search for SBAS satellite (only works with 1Hz
-                  ///< output rate)
-#define PMTK_ENABLE_WAAS "$PMTK301,2*2E" ///< Use WAAS for DGPS correction data
+#define GCI_ANTENNA   "$PGCMD,33,1*6C\r\n" // request for updates on antenna status
+#define GCI_NOANTENNA "$PGCMD,33,0*6D\r\n" // don't show antenna status messages
 
-#define PMTK_SET_NMEA_OUTPUT_GLLONLY                                           \
-  "$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on only the
-                                                      ///< GPGLL sentence
-#define PMTK_SET_NMEA_OUTPUT_RMCONLY                                           \
-  "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on only the
-                                                      ///< GPRMC sentence
-#define PMTK_SET_NMEA_OUTPUT_VTGONLY                                           \
-  "$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on only the
-                                                      ///< GPVTG
-#define PMTK_SET_NMEA_OUTPUT_GGAONLY                                           \
-  "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on just the
-                                                      ///< GPGGA
-#define PMTK_SET_NMEA_OUTPUT_GSAONLY                                           \
-  "$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on just the
-                                                      ///< GPGSA
-#define PMTK_SET_NMEA_OUTPUT_GSVONLY                                           \
-  "$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on just the
-                                                      ///< GPGSV
-#define PMTK_SET_NMEA_OUTPUT_RMCGGA                                            \
-  "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28" ///< turn on GPRMC and
-                                                      ///< GPGGA
-#define PMTK_SET_NMEA_OUTPUT_RMCGGAGSA                                         \
-  "$PMTK314,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" ///< turn on GPRMC, GPGGA
-                                                      ///< and GPGSA
-#define PMTK_SET_NMEA_OUTPUT_ALLDATA                                           \
-  "$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0*28" ///< turn on ALL THE DATA
+#define GCI_ENABLE_SBAS "$PMTK313,1*2E\r\n" // Enable search for SBAS satellite (only works with 1Hz < output rate)
+#define GCI_ENABLE_WAAS "$PMTK301,2*2E\r\n" // WAAS for DGPS correction data
+
+#define GCI_GLL_ONLY "$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // only the GLL sentence
+#define GCI_RMC_ONLY "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // only the RMC sentence
+// #define GCI_VTGONLY "$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // only the VTG
+#define GCI_GGA_ONLY "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GGA
+#define GCI_GSA_ONLY "$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GSA
+// #define GCI_GSVONLY "$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // just the GSV
+#define GCI_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" // RMC and GGA
+#define GCI_RMCGGAGSA "$PMTK314,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // RMC, GGA and GSA

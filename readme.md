@@ -7,9 +7,19 @@
 
 **Under development**
 
+## To Do
+
+- [ ] Better documentation
+- [ ] Make C++ and Python libraries the same
+- [ ] Fix Arduino compatability
+- [ ] Setup Python testing
+- [ ] Setup github actions for testing for both Python and C++
+- [ ] clean up namespace better
+- [ ] Fix arduino `keywords.txt`
+
 # MIT License
 
-**Copyright (c) 2023 The Guild of Calamitous Intent**
+**Copyright (c) 2023 Kevin J. Walchko**
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -8,9 +8,12 @@
 
 **work in progress**
 
+- [MTK User Manual](https://cdn.sparkfun.com/assets/parts/1/2/2/8/0/PMTK_Packet_User_Manual.pdf)
+- [MTK User NEMA Manual](https://www.sparkfun.com/datasheets/GPS/Modules/PMTK_Protocol.pdf)
+
 # MIT License
 
-**Copyright (c) 2023 The Guild of Calamitous Intent**
+**Copyright (c) 2023 Kevin J. Walchko**
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

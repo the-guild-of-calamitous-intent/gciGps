@@ -9,16 +9,23 @@
 gsa_t	KEYWORD1
 gga_t	KEYWORD1
 rmc_t	KEYWORD1
-date_t	KEYWORD1
-time_t	KEYWORD1
+gps_date_t	KEYWORD1
+gps_time_t	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-lastNMEA	KEYWORD2
-newNMEAreceived	KEYWORD2
-common_init	KEYWORD2
+to_dd	KEYWORD2
+to_time	KEYWORD2
+to_date	KEYWORD2
+to_num	KEYWORD2
+split	KEYWORD2
+checksum	KEYWORD2
+char2hex	KEYWORD2
+gsa_parser	KEYWORD2
+rmc_parser	KEYWORD2
+gga_parser	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
