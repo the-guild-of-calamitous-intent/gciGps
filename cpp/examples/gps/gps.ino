@@ -6,6 +6,15 @@ using namespace std;
 #define hostser Serial
 #define gpsser Serial1
 
+// #if ( SYSTEM_ENDIAN == _ENDIAN_LITTLE_ )
+//   #pragma message("Little endian system: "  __FILE__ " on " __TIMESTAMP__)
+// #elif (SYSTEM_ENDIAN == _ENDIAN_BIG_)
+//   #pragma message("Big endian system")
+// #else
+//   #warning UNKNOWN endian system
+// #endif
+  
+
 gci::GPS gps;
 
 void setup() {

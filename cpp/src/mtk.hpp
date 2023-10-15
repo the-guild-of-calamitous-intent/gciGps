@@ -50,11 +50,11 @@
 #define GCI_ENABLE_SBAS "$PMTK313,1*2E\r\n" // Enable search for SBAS satellite (only works with 1Hz < output rate)
 #define GCI_ENABLE_WAAS "$PMTK301,2*2E\r\n" // WAAS for DGPS correction data
 
-#define GCI_GLL_ONLY "$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // only the GLL sentence
-#define GCI_RMC_ONLY "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // only the RMC sentence
-// #define GCI_VTGONLY "$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // only the VTG
-#define GCI_GGA_ONLY "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GGA
-#define GCI_GSA_ONLY "$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GSA
-// #define GCI_GSVONLY "$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // just the GSV
+#define GCI_GLL "$PMTK314,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // only the GLL sentence
+#define GCI_RMC "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // only the RMC sentence
+// #define GCI_VTG "$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // only the VTG
+#define GCI_GGA "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GGA
+#define GCI_GSA "$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GSA
+// #define GCI_GSV "$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // just the GSV
 #define GCI_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" // RMC and GGA
 #define GCI_RMCGGAGSA "$PMTK314,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // RMC, GGA and GSA
