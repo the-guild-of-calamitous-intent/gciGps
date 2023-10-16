@@ -17,19 +17,12 @@ endif()
 #----------------------------
 enable_testing()
 
-list(APPEND stests
-    main
+list(APPEND gtests
+    main.cpp
 )
 
-message(STATUS "gTests ----------------------")
-foreach(name ${stests})
-    # message(STATUS " -> ${name}")
-    add_executable(${name} ${name}.cpp)
-    target_link_libraries(${name}
-        GTest::gtest_main
-        ${PROJECT_NAME})
-    add_test(NAME ${name} COMMAND ${name})
-endforeach()
-
+# run all tests
+add_executable(test-all ${gtests})
+target_link_libraries(test-all GTest::gtest_main ${PROJECT_NAME})
 include(GoogleTest)
-gtest_discover_tests(${stests})
+gtest_discover_tests(test-all)
