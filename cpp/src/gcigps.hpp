@@ -25,10 +25,17 @@
 
 #if defined(ARDUINO)
   typedef String cstring;
+#elif defined(PI_PICO) || defined(PI_PICO_W)
+  #warning "Pi pico is using std::string in gcigps ... FIXME"
+  #include <string>
+  typedef std::string cstring;
 #else
+  #warning "Using std::string in gcigps ... FIXME"
   #include <string>
   typedef std::string cstring;
 #endif
+
+#include <stdio.h> // FIXME: remove
 
 #include <vector>
 #include "mtk.hpp"
@@ -62,51 +69,57 @@ class GPS {
   }
 
   bool read(const char c) {
-    const char CR = '\r';
-    const char LF = '\n';
+    constexpr char CR = '\r';
+    constexpr char LF = '\n';
 
-    if (state == GpsState::NONE && c == '$') {
+    if (state == GpsState::NONE && c == '$') { // START
       state = GpsState::START;
       buffer.clear(); // reset
       buffer.push_back(c);
       // cout << "START: " << buffer.size() << endl;
+      // Serial.println("START");
+      return false;
+    }
+    if (state == GpsState::START && (c >= '*' && c <= 'Z')) {
+      buffer.push_back(c);
       return false;
     }
     if (state == GpsState::START && c == CR) {
       state = GpsState::END0;
-      end = c;
+      // Serial.println("END0");
       return false;
     }
-    if (state == GpsState::END0 && c == LF) {
+    if (state == GpsState::END0 && c == LF) { // DONE
       state = GpsState::NONE;
-      end = 0;
+      // Serial.println("END1");
       // cout << "DONE: " << buffer.size() << "  " << get_msg_str() << endl;
       return true;
     }
-    if (state == GpsState::END0 && c != LF) { // error
-      buffer.clear();
-      end = 0;
-      state = GpsState::NONE;
-      return false;
-    }
-    if (state == GpsState::START && c >= '*' && c <= 'Z') {
-      buffer.push_back(c);
-      return false;
-    }
+    // if (state == GpsState::END0 && c != LF) { // error
+    //   buffer.clear();
+    //   Serial.println("CRAP");
+    //   // end = 0;
+    //   state = GpsState::NONE;
+    //   return false;
+    // }
     // cout << "bad: " << c << endl;
+    state = GpsState::NONE;
+    buffer.clear();
     return false;
   }
 
-  char cbuf[128];
+  // char cbuf[128];
 
   cstring get_msg_str() {
+    buffer.push_back('\0');
+    cstring ret(buffer.data());
     // cstring ret(buffer.data(), buffer.size());
 
-    memset(cbuf,0,128);
-    memcpy(cbuf, buffer.data(), buffer.size());
-    cbuf[buffer.size()] = '\0';
+    // memset(cbuf,0,128);
+    // memcpy(cbuf, buffer.data(), buffer.size());
+    // cbuf[buffer.size()] = '\0';
 
-    cstring ret(cbuf);
+    // cstring ret(cbuf);
     return ret;
   }
 
@@ -151,7 +164,7 @@ class GPS {
 protected:
   GpsState state;
   std::vector<char> buffer;
-  char end{0};
+  // char end{0};
 };
 
 

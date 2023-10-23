@@ -28,12 +28,22 @@
 // <CR><LF> \r\n
 // $[....]<CR><LF>
 
+/////////////////////////////////////////////////////////////////////////////
+// PMTK001 ACK
+// PMTK01,CMD,FLAG,*CHECKSUM
+// FLAG: 0-invalid, 1-unsupported, 2-valid,failed, 3-valid,success
+// $PMTK001,604,3*32<CR><LF>
+//
+// $PMTK001,314,3*36 -> (314) set nema output, GCI_RMCGGA
+// $PMTK001,220,3*30 -> (220) set pos fix, GCI_UPDATE_1HZ
+/////////////////////////////////////////////////////////////////////////////
+
 // PMTK commands
 // https://www.sparkfun.com/datasheets/GPS/Modules/PMTK_Protocol.pdf
-#define GCI_UPDATE_1HZ "$PMTK220,1000*1F\r\n" //  1 Hz
+// #define GCI_UPDATE_1HZ "$PMTK220,1000*1F\r\n" //  1 Hz
 #define GCI_UPDATE_2HZ "$PMTK220,500*2B\r\n"  //  2 Hz
 #define GCI_UPDATE_5HZ "$PMTK220,200*2C\r\n"  //  5 Hz
-#define GCI_UPDATE_10HZ "$PMTK220,100*2F\r\n" // 10 Hz
+// #define GCI_UPDATE_10HZ "$PMTK220,100*2F\r\n" // 10 Hz ... invalid? must >= 200, only 100
 
 // Position fix update rates
 // Can't fix position faster than 5 times a second!
@@ -45,7 +55,7 @@
 #define GCI_BAUD_9600 "$PMTK251,9600*17\r\n"     //   9600 bps
 
 #define GCI_ANTENNA   "$PGCMD,33,1*6C\r\n" // request for updates on antenna status
-#define GCI_NOANTENNA "$PGCMD,33,0*6D\r\n" // don't show antenna status messages
+// #define GCI_NOANTENNA "$PGCMD,33,0*6D\r\n" // don't show antenna status messages
 
 #define GCI_ENABLE_SBAS "$PMTK313,1*2E\r\n" // Enable search for SBAS satellite (only works with 1Hz < output rate)
 #define GCI_ENABLE_WAAS "$PMTK301,2*2E\r\n" // WAAS for DGPS correction data
@@ -56,5 +66,10 @@
 #define GCI_GGA "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GGA
 #define GCI_GSA "$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // just the GSA
 // #define GCI_GSV "$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0*29" // just the GSV
-#define GCI_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" // RMC and GGA
+// #define GCI_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" // RMC and GGA
 #define GCI_RMCGGAGSA "$PMTK314,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n" // RMC, GGA and GSA
+
+
+constexpr uint8_t GCI_RMCGGA[] = "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n"; // RMC and GGA
+constexpr uint8_t GCI_UPDATE_1HZ[] = "$PMTK220,1000*1F\r\n"; //  1 Hz
+constexpr uint8_t GCI_NOANTENNA[] = "$PGCMD,33,0*6D\r\n"; // don't show antenna status messages

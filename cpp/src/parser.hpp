@@ -179,6 +179,7 @@ bool gsa_parser(const cstring& s, gsa_t& msg) {
 static
 bool gga_parser(const cstring& s, gga_t& msg) {
   std::vector<cstring> v;
+  try {
   bool ok = split(s, ',', v);
   if (!ok) return false;
   if (v.size() != 15) return false;
@@ -191,6 +192,7 @@ bool gga_parser(const cstring& s, gga_t& msg) {
   msg.hdop = to_float(v[8]);
   msg.msl = to_float(v[9]);
   msg.geoid = to_float(v[11]);
+  } catch (...) { return false; }
   return true;
 }
 
