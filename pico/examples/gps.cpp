@@ -29,24 +29,24 @@ int main() {
   gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
   gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
   uart_set_fifo_enabled(UART_ID, true);
-  uart_set_translate_crlf(UART_ID, true);
+  uart_set_translate_crlf(UART_ID, false);
 
   if (uart_is_enabled(UART_ID)) printf("/-- UART is READY at %u baud --/\n", baud);
   else printf("*** UART init FAILED ***\n");
 
-  // uart_puts(UART_ID, GCI_RMCGGA);
-  // uart_puts(UART_ID, GCI_UPDATE_1HZ);
-  // uart_puts(UART_ID, GCI_NOANTENNA);
-
   uart_write_blocking(UART_ID, GCI_RMCGGA, sizeof(GCI_RMCGGA));
-  // uart_write_blocking(UART_ID, reinterpret_cast<const uint8_t*>(GCI_UPDATE_1HZ), strlen(GCI_UPDATE_1HZ));
   uart_write_blocking(UART_ID, GCI_UPDATE_1HZ, sizeof(GCI_UPDATE_1HZ));
   uart_write_blocking(UART_ID, GCI_NOANTENNA, sizeof(GCI_NOANTENNA));
+  uart_write_blocking(UART_ID, GCI_BAUD_115200, sizeof(GCI_BAUD_115200));
+  baud = uart_set_baudrate(UART_ID, 115200);
+  printf("/-- UART is reset to %u baud --/\n", baud);
+
+  sleep_ms(100);
 
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);
 
-  puts("/// GPS START ///\n");
+  printf("/// GPS START ///\n");
 
   while (1) {
     // gpio_put(LED_PIN, 0);
@@ -63,9 +63,6 @@ int main() {
     bool ok = false;
     // while (avail--) {
     while (uart_is_readable(UART_ID)) {
-    // for (int i=32; i>0; --i) {
-      // int c = gpsser.read();
-      // char c = uart_getc(UART_ID);
       uint8_t c;
       uart_read_blocking(UART_ID, &c, 1);
       char cc = static_cast<char>(c);

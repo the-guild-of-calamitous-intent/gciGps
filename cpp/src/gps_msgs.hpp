@@ -23,7 +23,7 @@
 /////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 struct __attribute__((packed)) gps_date_t {
   uint8_t year, month, day;
