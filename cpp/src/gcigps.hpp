@@ -23,8 +23,7 @@
 /////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-// #include <cstdio> // FIXME: remove
-#include <vector>
+#include <cstring>
 #include "mtk.hpp"
 #include "gps_msgs.hpp"
 #include "parser.hpp"
@@ -42,11 +41,26 @@ enum class GpsID: uint8_t {
   NONE,
   GGA,
   GSA,
-  RMC,
-  GLL
+  // RMC,
+  // GLL
 };
 
 constexpr size_t C_BUFFER_SIZE = 128; // max NEMA length
+
+static
+bool valid_gps_msg(const char* msg) {
+  size_t sz = strlen(msg);
+  if (msg[0] != '$') return false;
+  uint8_t chksum = 0;
+  size_t i = 1;
+  while (i < sz) {
+    // if (msg[i] == '$') { i++; continue; }
+    if (msg[i] == '*') break;
+    chksum ^= msg[i++];
+  }
+  uint8_t msg_cs = checksum(msg[sz-2], msg[sz-1]);
+  return chksum == msg_cs;
+}
 
 class GPS {
   public:
@@ -67,94 +81,61 @@ class GPS {
       memset(cbuff, '\0', C_BUFFER_SIZE);
       ptr = 0;
       cbuff[ptr++] = c;
-
-      // buffer.clear(); // reset
-      // buffer.push_back(c);
       return false;
     }
     if (state == GpsState::START && (c >= '*' && c <= 'Z')) {
-      // buffer.push_back(c);
       cbuff[ptr++] = c;
       return false;
     }
     if (state == GpsState::START && c == CR) {
       state = GpsState::END0;
-      // Serial.println("END0");
       return false;
     }
     if (state == GpsState::END0 && c == LF) { // DONE
       state = GpsState::NONE;
-      // buffer.push_back('\0');
       cbuff[ptr++] = '\0';
-      // Serial.println("END1");
-      // cout << "DONE: " << buffer.size() << "  " << get_msg_str() << endl;
       return true;
     }
-    // if (state == GpsState::END0 && c != LF) { // error
-    //   buffer.clear();
-    //   Serial.println("CRAP");
-    //   // end = 0;
-    //   state = GpsState::NONE;
-    //   return false;
-    // }
-    // cout << "bad: " << c << endl;
     state = GpsState::NONE;
-    // buffer.clear();
     return false;
   }
 
   GpsID get_id() {
-    // if (buffer.size() < 6) return GpsID::NONE;
-
-    // memset(cbuff, '\0', C_BUFFER_SIZE);
-    // memcpy(cbuff, buffer.data(), buffer.size());
-
+    if (valid_gps_msg(cbuff) == false) return GpsID::NONE;
     if (strncmp(cbuff+3, "GGA", 3) == 0) return GpsID::GGA;
-    if (strncmp(cbuff+3, "RMC", 3) == 0) return GpsID::RMC;
-    // if (strncmp(cbuff+3, "GSA", 3) == 0) return GpsID::GSA;
+    if (strncmp(cbuff+3, "GSA", 3) == 0) return GpsID::GSA;
+    // if (strncmp(cbuff+3, "RMC", 3) == 0) return GpsID::RMC;
     // if (strncmp(cbuff+3, "GLL", 3) == 0) return GpsID::GLL;
     return GpsID::NONE;
   }
 
+  inline
   bool get_msg(gga_t& msg) {
-    // memset(cbuff, '\0', C_BUFFER_SIZE);
-    // memcpy(cbuff, buffer.data(), buffer.size());
     return gga_parser(cbuff, msg);
   }
 
-  bool get_msg(rmc_t& msg) {
-    // memset(cbuff, '\0', C_BUFFER_SIZE);
-    // memcpy(cbuff, buffer.data(), buffer.size());
-    return rmc_parser(cbuff, msg);
+  inline
+  bool get_msg(gsa_t& msg) {
+    return gsa_parser(cbuff, msg);
   }
 
-  // bool get_msg(gsa_t& msg) {
-  //   // cstring str = get_msg_str();
-  //   memset(cbuff, '\0', C_BUFFER_SIZE);
-  //   memcpy(cbuff, buffer.data(), buffer.size());
-  //   return gsa_parser(cbuff, msg);
+  // bool get_msg(rmc_t& msg) {
+  //   // memset(cbuff, '\0', C_BUFFER_SIZE);
+  //   // memcpy(cbuff, buffer.data(), buffer.size());
+  //   return rmc_parser(cbuff, msg);
   // }
 
   // bool get_msg(gll_t& msg) {
   //   // cstring str = get_msg_str();
-  //   memset(cbuff, '\0', C_BUFFER_SIZE);
-  //   memcpy(cbuff, buffer.data(), buffer.size());
+  //   // memset(cbuff, '\0', C_BUFFER_SIZE);
+  //   // memcpy(cbuff, buffer.data(), buffer.size());
   //   return gll_parser(cbuff, msg);
   // }
 
 protected:
   GpsState state;
-  // std::vector<char> buffer;
   char cbuff[C_BUFFER_SIZE];
   uint32_t ptr{0};
-  // char end{0};
 };
 
-
-}
-
-// namespace gecko {
-
-
-
-// }
+} // end namespace gci

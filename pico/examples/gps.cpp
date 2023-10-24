@@ -57,7 +57,7 @@ int main() {
     // puts(".");
 
     gga_t gga;
-    rmc_t rmc;
+    // rmc_t rmc;
 
     // int avail = gpsser.available();
     bool ok = false;
