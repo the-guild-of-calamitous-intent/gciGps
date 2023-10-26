@@ -1,11 +1,12 @@
 #pragma once
 
+#include <cstdio>
 #include <cstdint> // int types
 #include <cstdlib> // atoi, atof
 #include <cstring> // memcpy, memset, strtok
 
 #define CSTR_LEN 16
-#define CVEC_LEN 18
+#define CVEC_LEN 25
 
 // Fixed string array
 struct cstr_t {
@@ -16,14 +17,17 @@ struct cstr_t {
     if (sz >= CSTR_LEN) return false;
     memcpy(data, s, sz);
     data[sz] = '\0';
-    size = sz + 1;
+    // size = sz + 1;
     return true;
   }
 
-  void clear() { memset(data,'\0',CSTR_LEN); }
+  void clear() {
+    memset(data,'\0',CSTR_LEN);
+    // size = 0;
+  }
 
   char data[CSTR_LEN]{'\0'};
-  size_t size=0;
+  // size_t size=0;
 };
 
 // Fixed size vector of fixed string arrays
@@ -31,16 +35,9 @@ struct cvec_t {
   cvec_t () {}
   ~cvec_t () {}
 
-  bool push_back(const char* s, size_t sz) {
-    bool ok = array[index].set(s,sz);
-    if (!ok) return false;
-    index++;
-    return true;
-  }
-
-  void pop() {
-    if (index > 0) index--;
-    // return array[index+1];
+  char* get_next() {
+    if (index >= CVEC_LEN) return nullptr;
+    return array[index++].data;
   }
 
   inline
@@ -54,14 +51,13 @@ struct cvec_t {
 
   void clear() {
     int i = CVEC_LEN;
-    while (i--) array[i].clear();
+    while (i >= 0) array[i--].clear();
+    index = 0;
   }
 
   cstr_t array[CVEC_LEN];
   size_t index{0};
-  const size_t max_size{CVEC_LEN};
 };
-
 
 // Helper functions ///////////////////////////////////////////////////////////
 
@@ -116,17 +112,45 @@ gps_date_t to_date(const char* s) {
   return d;
 }
 
-static
-bool split(const char* str, cvec_t& v) {
-  char * pch;
-  pch = strtok ((char*)str,",*");
-  while (pch != NULL) {
-    // printf ("%s  %zu\n",pch,strlen(pch));
-    v.push_back(pch, strlen(pch));
-    if (v.size() == v.max_size) break; // better way to do this?
-    pch = strtok (NULL, ",*");
+cvec_t v;
+
+bool split(char const* input) {
+  char const* token_start = input;
+  char const* token_end = input;
+  size_t str_size = 0;
+
+  while (*token_end != '\0') {
+    if (*token_end == ',' || *token_end == '*') { // found deliminator
+      if (token_start == token_end) { // empty token
+        char* p = v.get_next();
+        if (p == nullptr) return false;
+        p[0] = '#';
+        p[1] = '\0';
+      }
+      else { // token has len > 0
+        char* p = v.get_next();
+        if (p == nullptr) return false;
+        strncpy(p, token_start, str_size-1);
+      }
+      // reset for next token
+      token_start = token_end + 1;
+      str_size = 0;
+    }
+
+    token_end++;
+    str_size++;
   }
-  if (v.size() > 0) v.pop(); // remove checksum
+
+  // get final token, which is checksum
+  // if (token_start != token_end) {
+  //   char* p = v.get_next();
+  //   if (p == nullptr) return false;
+  //   strncpy(p, token_start, str_size-1);
+  // }
+
+  // printf(">> Msg size: %zu ", v.size());
+  // for (int i=0; i<v.size(); ++i) printf("%i: %s ", i, v[i]);
+  // printf("\n");
 
   return true;
 }
@@ -134,27 +158,35 @@ bool split(const char* str, cvec_t& v) {
 //////////////////////////////////////////////////////////////////////////////
 
 // $GPGGA,234805.000,3906.7106,N,12120.3144,W,1,04,1.77,135.6,M,-22.1,M,,*50
+// enum GGA {NO_ERROR, }
 static
-bool gga_parser(const char* s, gga_t& msg) {
+uint16_t gga_parser(const char* s, gga_t& msg) {
   // if (valid_gps_msg(s) == false) return false; // move earlier?
-  cvec_t v;
+  // cvec_t v;
   v.clear();
   try { // FIXME: can I get rid of try/catch?
-    if (!split(s, v)) return false;
+    if (!split(s)) return 1;
     // for (const cstr_t& c: v) printf("%s\n", c.data);
 
-    if (v.size() < 10) return false;
+    if (v.size() != 15) return 2;
 
-    msg.utc = to_time(v[1]);
-    msg.lat = to_dd(v[2], v[3][0],2);
-    msg.lon = to_dd(v[4], v[5][0],3);
+    if (v[1][0] != '#') msg.utc = to_time(v[1]);
+    else return 3;
+    if (v[2][0] != '#') msg.lat = to_dd(v[2], v[3][0],2);
+    else return 4;
+    if (v[4][0] != '#') msg.lon = to_dd(v[4], v[5][0],3);
+    else return 5;
 
-    msg.fix_qual = static_cast<uint8_t>(atoi(v[6]));
-    msg.num_sats = static_cast<uint8_t>(atoi(v[7]));
-    msg.hdop = atof(v[8]);
-    msg.msl = atof(v[9]); // altitude
-  } catch (...) { return false; }
-  return true;
+    if (v[6][0] != '#') msg.fix_qual = static_cast<uint8_t>(atoi(v[6]));
+    else return 6;
+    if (v[7][0] != '#') msg.num_sats = static_cast<uint8_t>(atoi(v[7]));
+    else return 7;
+    if (v[8][0] != '#') msg.hdop = atof(v[8]);
+    else return 8;
+    if (v[9][0] != '#') msg.msl = atof(v[9]); // altitude
+    else return 9;
+  } catch (...) { return 10; }
+  return 0;
 }
 
 // ONLY care about the LAST 3 numbers: PDOP, HDOP, VDOP
@@ -162,24 +194,32 @@ bool gga_parser(const char* s, gga_t& msg) {
 // GPS covariance matrix: [hdop^2 hdop^2 vdop^2]
 // $GPGSA,A,3,03,32,02,04,,,,,,,,,2.01,1.77,0.95*08
 static
-bool gsa_parser(const char* s, gsa_t& msg) {
-  cvec_t v;
+uint16_t gsa_parser(const char* s, gsa_t& msg) {
+  // cvec_t v;
   v.clear();
   try {
-    if (!split(s, v)) return false;
-    if (v.size() < 4) return false;
-    // for (int i=0; i<v.index; ++i) printf("%i: %s\n", i++, s);
+    if (!split(s)) return 1;
+    if (v.size() != 18) return 2;
+    // for (int i=0; i<v.size(); ++i) printf("%i: %s ", i, v[i]);
+    // printf("\n");
 
-    size_t end = v.index;
+    // size_t end = v.index;
     // for (int i=0; i<v.index; ++i) printf("%i: %s\n", i, v[i]);
     // printf(">> %s %s %s\n", v[v.index-1], v[v.index-2], v[v.index-3]);
 
-    msg.vdop = atof(v[end-1]); // vertical dop
-    msg.hdop = atof(v[end-2]); // horizontal dop
-    msg.pdop = atof(v[end-3]); // spread of satellites
-  } catch (...) { return false; }
+    // msg.vdop = atof(v[end-1]); // vertical dop
+    // msg.hdop = atof(v[end-2]); // horizontal dop
+    // msg.pdop = atof(v[end-3]); // spread of satellites
 
-  return true;
+    if (v[15][0] != '#') msg.pdop = atof(v[15]); // vertical dop
+    else return 3;
+    if (v[16][0] != '#') msg.hdop = atof(v[16]); // horizontal dop
+    else return 4;
+    if (v[17][0] != '#') msg.vdop = atof(v[17]); // spread of satellites
+    else return 5;
+  } catch (...) { return 6; }
+
+  return 0;
 }
 
 // // $GPRMC,234805.000,A,3906.7106,N,12120.3144,W,0.17,95.16,120823,,,A*4D

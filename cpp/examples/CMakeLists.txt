@@ -1,13 +1,10 @@
 list(APPEND ex
-    simple.cpp
+    simple
+    token
 )
 
-# message(STATUS "Examples ----------------------")
-foreach(src ${ex})
-    get_filename_component(name ${src} NAME_WE)
-    # message(STATUS " -> ${name}")
-    add_executable(${name} ${src})
+foreach(name ${ex})
+    add_executable(${name} ${name}.cpp)
     target_link_libraries(${name} ${PROJECT_NAME})
-    target_include_directories(${name} PUBLIC ../src)
-    # add_test(NAME ${name} COMMAND ${name})
+    # target_include_directories(${name} PUBLIC ../src)
 endforeach()

@@ -49,12 +49,12 @@ constexpr size_t C_BUFFER_SIZE = 128; // max NEMA length
 
 static
 bool valid_gps_msg(const char* msg) {
-  size_t sz = strlen(msg);
+  if (msg == nullptr) return false;
   if (msg[0] != '$') return false;
+  size_t sz = strlen(msg);
   uint8_t chksum = 0;
   size_t i = 1;
   while (i < sz) {
-    // if (msg[i] == '$') { i++; continue; }
     if (msg[i] == '*') break;
     chksum ^= msg[i++];
   }
@@ -94,6 +94,11 @@ class GPS {
     if (state == GpsState::END0 && c == LF) { // DONE
       state = GpsState::NONE;
       cbuff[ptr++] = '\0';
+      if (valid_gps_msg(cbuff) == false) {
+        memset(cbuff, '\0', C_BUFFER_SIZE);
+        ptr = 0;
+        return false;
+      }
       return true;
     }
     state = GpsState::NONE;
@@ -101,7 +106,7 @@ class GPS {
   }
 
   GpsID get_id() {
-    if (valid_gps_msg(cbuff) == false) return GpsID::NONE;
+    // if (valid_gps_msg(cbuff) == false) return GpsID::NONE;
     if (strncmp(cbuff+3, "GGA", 3) == 0) return GpsID::GGA;
     if (strncmp(cbuff+3, "GSA", 3) == 0) return GpsID::GSA;
     // if (strncmp(cbuff+3, "RMC", 3) == 0) return GpsID::RMC;
