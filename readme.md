@@ -7,6 +7,13 @@
 
 **Under development**
 
+Performs NEMA and MTK message parsing
+
+## Other Libraries
+
+- [ublox sfe lib](https://github.com/sparkfun/SparkFun_u-blox_GNSS_Arduino_Library)
+- [ublox protocol](https://content.u-blox.com/sites/default/files/u-blox-M10-SPG-5.10_InterfaceDescription_UBX-21035062.pdf)
+
 ## To Do
 
 - [ ] Better documentation
@@ -16,6 +23,7 @@
 - [ ] Setup github actions for testing for both Python and C++
 - [ ] clean up namespace better
 - [ ] Fix arduino `keywords.txt`
+- [ ] Make MTK more useable
 
 # MIT License
 
