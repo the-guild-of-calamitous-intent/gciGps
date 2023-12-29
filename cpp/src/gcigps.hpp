@@ -37,14 +37,21 @@ enum class GpsState: uint8_t {
   END1
 };
 
-enum class GpsID: uint8_t {
-  NONE,
-  GGA,
-  GSA,
-  // RMC,
-  // GLL
-};
+// enum class GpsID: uint8_t {
+//   NONE,
+//   GGA,
+//   GSA,
+//   // RMC,
+//   // GLL
+// };
 
+constexpr uint8_t GPS_NONE = 0;
+constexpr uint8_t GPS_GGA = 1;
+constexpr uint8_t GPS_GSA = 2;
+constexpr uint8_t GPS_RMC = 4;
+constexpr uint8_t GPS_GLL = 8;
+
+// change to MAX_NEMA_LENGTH
 constexpr size_t C_BUFFER_SIZE = 128; // max NEMA length
 
 static
@@ -62,16 +69,16 @@ bool valid_gps_msg(const char* msg) {
   return chksum == msg_cs;
 }
 
-class GPS {
+class NEMA {
   public:
-  GPS(): state(GpsState::NONE) {}
-  ~GPS() {}
+  NEMA() {}
+  ~NEMA() {}
 
   bool valid_msg(const char* msg, size_t len) {
     return true;
   }
 
-  bool read(const char c) {
+  uint8_t parse(const char c) {
     constexpr char CR = '\r';
     constexpr char LF = '\n';
 
@@ -81,15 +88,15 @@ class GPS {
       memset(cbuff, '\0', C_BUFFER_SIZE);
       ptr = 0;
       cbuff[ptr++] = c;
-      return false;
+      return GPS_NONE;
     }
     if (state == GpsState::START && (c >= '*' && c <= 'Z')) {
       cbuff[ptr++] = c;
-      return false;
+      return GPS_NONE;
     }
     if (state == GpsState::START && c == CR) {
       state = GpsState::END0;
-      return false;
+      return GPS_NONE;
     }
     if (state == GpsState::END0 && c == LF) { // DONE
       state = GpsState::NONE;
@@ -97,21 +104,12 @@ class GPS {
       if (valid_gps_msg(cbuff) == false) {
         memset(cbuff, '\0', C_BUFFER_SIZE);
         ptr = 0;
-        return false;
+        return GPS_NONE;
       }
-      return true;
+      return get_id();
     }
     state = GpsState::NONE;
-    return false;
-  }
-
-  GpsID get_id() {
-    // if (valid_gps_msg(cbuff) == false) return GpsID::NONE;
-    if (strncmp(cbuff+3, "GGA", 3) == 0) return GpsID::GGA;
-    if (strncmp(cbuff+3, "GSA", 3) == 0) return GpsID::GSA;
-    // if (strncmp(cbuff+3, "RMC", 3) == 0) return GpsID::RMC;
-    // if (strncmp(cbuff+3, "GLL", 3) == 0) return GpsID::GLL;
-    return GpsID::NONE;
+    return GPS_NONE;
   }
 
   inline
@@ -138,9 +136,18 @@ class GPS {
   // }
 
 protected:
-  GpsState state;
-  char cbuff[C_BUFFER_SIZE];
+  GpsState state{GpsState::NONE};
+  char cbuff[C_BUFFER_SIZE]{0};
   uint32_t ptr{0};
+
+  uint8_t get_id() {
+    // if (valid_gps_msg(cbuff) == false) return GpsID::NONE;
+    if (strncmp(cbuff+3, "GGA", 3) == 0) return GPS_GGA;
+    if (strncmp(cbuff+3, "GSA", 3) == 0) return GPS_GSA;
+    // if (strncmp(cbuff+3, "RMC", 3) == 0) return GPS_RMC;
+    // if (strncmp(cbuff+3, "GLL", 3) == 0) return GPS_GLL;
+    return GPS_NONE;
+  }
 };
 
 } // end namespace gci
