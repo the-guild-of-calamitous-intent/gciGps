@@ -58,6 +58,7 @@ TEST(gps, GSA2) {
 }
 
 TEST(gps, GPS1) {
+  uint8_t id;
   gps_time_t utc{23,48,5.678};
   vector<string> v{
     "\n\n$GPGGA,234805.000,3906.7106,N,12120.3144,W,1,04,1.77,135.6,M,-22.1,M,,*50\r\na\t\r",
@@ -67,17 +68,18 @@ TEST(gps, GPS1) {
   };
 
   for (const string& s: v) {
-    gci::GPS gps;
-    bool ok = false;
+    gci::NEMA gps;
+    // bool ok = false;
     for (const char& c: s) {
       // don't want to read junk at end of string
-      if (!ok) ok = gps.read(c);
+      id = gps.parse(c);
+      if (id > 0) break;
     }
 
-    EXPECT_TRUE(ok); // good message
+    EXPECT_TRUE(id > 0); // good message
 
-    gci::GpsID id = gps.get_id();
-    if (id == gci::GpsID::GGA) {
+    // uint8_t id = gps.get_id();
+    if (id == gci::GPS_GGA) {
       gps_time_t utc{23,48,5.000};
       gga_t gga;
       // cout << "GGA" << endl;
@@ -90,7 +92,7 @@ TEST(gps, GPS1) {
       EXPECT_FLOAT_EQ(gga.lat, 39. + 6.7106/60.);
       EXPECT_FLOAT_EQ(gga.lon, -121. - 20.3144/60.);
     }
-    else if (id == gci::GpsID::GSA) {
+    else if (id == gci::GPS_GSA) {
       gsa_t gsa;
       // cout << "GSA" << endl;
 
@@ -107,13 +109,14 @@ TEST(gps, GPS1) {
       EXPECT_FLOAT_EQ(gsa.hdop, 1.77);
       EXPECT_FLOAT_EQ(gsa.vdop, 0.95);
     }
-    else if (id == gci::GpsID::NONE) {}
+    else if (id == gci::GPS_NONE) {}
     else EXPECT_TRUE(false);
   }
 
 }
 
 TEST(gps, GPS2) {
+  uint8_t id = 0;
   gps_time_t utc{23,48,5.678};
   vector<string> v{
     "\n\n$GPGGA,234805.000,3906.7106,N,12120.3144,W,1,04,1.77,135.6,M,-22.1,M,,*50\r\na\t\r",
@@ -125,13 +128,13 @@ TEST(gps, GPS2) {
   };
 
   for (const string& s: v) {
-    gci::GPS gps;
-    bool ok = false;
+    gci::NEMA gps;
+    // bool ok = false;
     for (const char& c: s) {
-      ok = gps.read(c);
-      if (ok) break;
+      id = gps.parse(c);
+      if (id > 0) break;
     }
-    EXPECT_TRUE(ok) << s;
+    EXPECT_TRUE(id > 0) << s;
   }
 }
 
