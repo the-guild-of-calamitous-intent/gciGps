@@ -16,6 +16,7 @@ Performs NEMA and MTK message parsing
 
 ## To Do
 
+- [ ] Change name to `gciNEMA`?
 - [ ] Better documentation
 - [ ] Make C++ and Python libraries the same
 - [ ] Fix Arduino compatability
