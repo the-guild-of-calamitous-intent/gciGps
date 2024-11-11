@@ -181,9 +181,9 @@ uint16_t gga_parser(const char* s, gga_t& msg) {
     else return 6;
     if (v[7][0] != '#') msg.num_sats = static_cast<uint8_t>(atoi(v[7]));
     else return 7;
-    if (v[8][0] != '#') msg.hdop = atof(v[8]);
+    if (v[8][0] != '#') msg.hdop = (float)atof(v[8]);
     else return 8;
-    if (v[9][0] != '#') msg.msl = atof(v[9]); // altitude
+    if (v[9][0] != '#') msg.msl = (float)atof(v[9]); // altitude
     else return 9;
   } catch (...) { return 10; }
   return 0;
@@ -211,11 +211,11 @@ uint16_t gsa_parser(const char* s, gsa_t& msg) {
     // msg.hdop = atof(v[end-2]); // horizontal dop
     // msg.pdop = atof(v[end-3]); // spread of satellites
 
-    if (v[15][0] != '#') msg.pdop = atof(v[15]); // vertical dop
+    if (v[15][0] != '#') msg.pdop = (float)atof(v[15]); // vertical dop
     else return 3;
-    if (v[16][0] != '#') msg.hdop = atof(v[16]); // horizontal dop
+    if (v[16][0] != '#') msg.hdop = (float)atof(v[16]); // horizontal dop
     else return 4;
-    if (v[17][0] != '#') msg.vdop = atof(v[17]); // spread of satellites
+    if (v[17][0] != '#') msg.vdop = (float)atof(v[17]); // spread of satellites
     else return 5;
   } catch (...) { return 6; }
 
